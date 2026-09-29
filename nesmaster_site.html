@@ -1,1 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NESMASTER — Emulador NES para Android</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080a10;
+  --bg2:#0d1120;
+  --surface:#111522;
+  --surface2:#171c2b;
+  --text:#f5f7ff;
+  --muted:#aeb6cc;
+  --accent:#5ee7ff;
+  --accent2:#8b7cff;
+  --border:#293149;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Urbanist',system-ui,-apple-system,'Segoe UI',sans-serif;
+  line-height:1.6;
+}
+main{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(94,231,255,.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(139,124,255,.10), transparent 60%),
+    linear-gradient(180deg,#090b13,#0d1120);
+  position:relative;
+  overflow:hidden;
+}
+/* subtle grid texture */
+main::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(94,231,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(94,231,255,.04) 1px, transparent 1px);
+  background-size:44px 44px;
+  pointer-events:none;
+  mask-image:linear-gradient(180deg, black, transparent 80%);
+  -webkit-mask-image:linear-gradient(180deg, black, transparent 80%);
+}
+header{
+  position:relative;
+  padding:84px 22px 56px;
+  text-align:center;
+  border-bottom:1px solid var(--border);
+}
+.logo{
+  font-size:clamp(46px,11vw,92px);
+  font-weight:900;
+  letter-spacing:8px;
+  line-height:1;
+  background:linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 40px rgba(94,231,255,.25);
+}
+.tag{
+  display:inline-block;
+  margin-top:18px;
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-size:13px;
+  padding:6px 14px;
+  border:1px solid rgba(94,231,255,.35);
+  border-radius:999px;
+  background:rgba(94,231,255,.06);
+}
+.sub{color:var(--muted); margin-top:14px; font-size:17px}
+.wrap{max-width:920px; margin:auto; padding:36px 20px 70px; position:relative}
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px;
+  margin:22px 0;
+  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(94,231,255,.35);
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
+h2{
+  margin:0 0 10px;
+  font-size:24px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+h2 .ico{color:var(--accent); flex:none}
+p{color:var(--muted); margin:8px 0}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 24px;
+  border-radius:12px;
+  background:linear-gradient(90deg, var(--accent), #7ad4ff);
+  color:#061018;
+  text-decoration:none;
+  font-weight:800;
+  font-size:16px;
+  margin:10px 8px 0 0;
+  border:none;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .2s ease;
+  box-shadow:0 4px 20px rgba(94,231,255,.3);
+}
+.btn:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(94,231,255,.45)}
+.btn:active{transform:translateY(0)}
+.btn.alt{
+  background:var(--surface2);
+  color:var(--text);
+  border:1px solid var(--border);
+  box-shadow:none;
+}
+.meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:14px;
+}
+.pill{
+  font-size:13px;
+  color:var(--muted);
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:6px 12px;
+  border-radius:999px;
+}
+.steps{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+  margin-top:18px;
+}
+.step{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  position:relative;
+}
+.step-num{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px; height:28px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
+  color:#061018;
+  font-weight:900;
+  font-size:14px;
+  margin-bottom:10px;
+}
+.step h3{margin:0 0 6px; font-size:16px; font-weight:700}
+.step p{margin:0; font-size:14px}
+.credits{font-size:13px; color:#7f89a3; margin-top:20px}
+footer{
+  text-align:center;
+  padding:30px 20px;
+  color:#68728c;
+  border-top:1px solid var(--border);
+  font-size:14px;
+  position:relative;
+}
+.warn{
+  margin-top:16px;
+  padding:12px 16px;
+  border-left:3px solid var(--accent2);
+  background:rgba(139,124,255,.08);
+  border-radius:0 10px 10px 0;
+  font-size:14px;
+  color:var(--muted);
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="logo">NESMASTER</div>
+  <div class="tag">Projeto em desenvolvimento</div>
+  <p class="sub">Emulador NES leve e independente para Android.</p>
+</header>
 
+<div class="wrap">
+
+  <section class="card">
+    <h2>
+      <svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="13.5" r=".5" fill="currentColor"/></svg>
+      Sobre o projeto
+    </h2>
+    <p>NESMASTER é um emulador de NES (Nintendo Entertainment System) em desenvolvimento, com foco em uma experiência simples, leve e direta para rodar seus jogos clássicos no Android.</p>
+    <a class="btn" href="#download">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Ir para Download
+    </a>
+    <a class="btn alt" href="#instalar">Como instalar</a>
+  </section>
+
+  <section class="card" id="download">
+    <h2>
+      <svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download
+    </h2>
+    <p>Baixe o arquivo APK abaixo e instale diretamente no seu dispositivo Android.</p>
+    <a class="btn" href="https://github.com/TheFanNes19182NesMaster/NES-MASTER/raw/main/NESMASTER_fixed.apk" download="NESMASTER_fixed.apk">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Baixar APK
+    </a>
+    <div class="meta">
+      <span class="pill">Arquivo: NESMASTER_fixed.apk</span>
+      <span class="pill">Tamanho: ~41 KB</span>
+      <span class="pill">Formato: APK (Android)</span>
+    </div>
+    <div class="warn">
+      Dica: o arquivo está hospedado no próprio repositório do GitHub. Se o download não iniciar automaticamente, clique com o botão direito e escolha "Salvar link como...".
+    </div>
+  </section>
+
+  <section class="card" id="instalar">
+    <h2>
+      <svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      Como instalar
+    </h2>
+    <p>Como o app não vem da Google Play, é preciso permitir a instalação de fontes externas.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Baixe o APK</h3>
+        <p>Toque no botão de download acima e salve o arquivo no seu celular.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Permitir fontes desconhecidas</h3>
+        <p>Abra o arquivo baixado. Se solicitado, permita que seu navegador ou gerenciador de arquivos instale apps de fontes externas.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Instale e jogue</h3>
+        <p>Confirme a instalação, abra o NESMASTER e carregue sua ROM favorita.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>
+      <svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Créditos
+    </h2>
+    <p>Projeto independente em desenvolvimento.</p>
+    <div class="credits">
+      Criado por Dola IA<br>
+      Remake: ChatGPT
+    </div>
+  </section>
+
+</div>
+
+<footer>NESMASTER • Projeto independente • Nintendo Entertainment System é marca de seus respectivos donos.</footer>
+</main>
+</body>
+</html>
